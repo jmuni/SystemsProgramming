@@ -1,0 +1,52 @@
+./pointersorter "thing stuff otherstuff blarp"
+
+thing
+stuff 
+otherstuff
+blarp
+
+./pointersorter "thing stuff123otherstuff,blarp"
+
+thing
+stuff
+otherstuff
+blarp
+
+./pointersorter "march marching"
+
+marching
+march
+
+./pointersorter "Zoo Apple"
+
+Zoo
+Apple
+
+./pointersorter "zoo zOo zOO"
+
+zoo
+zOo
+zOO
+
+./pointersorter "zoo zoology Zoo Apple apple"
+zoology
+zoo
+apple
+Zoo
+Apple
+//in the case of both uppercase and lowercase words, lower case has priority, I'm not sure how to reverse this.
+
+./pointersorter "march" "marching" 
+
+ERROR: Wrong input!
+
+./pointersorter apple zoo
+
+ERROR: Wrong input!
+
+./pointersorter apple
+
+apple
+//this works without quotes because it is a single word without seperators.
+
+
