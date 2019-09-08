@@ -1,0 +1,8 @@
+Workload F demonstrates the ability of the free function to combine sequences of free'd blocks into one larger block. It does this by first filling the 4096 bytes with 16 bit integer pointers, which combined with the 16 byte size of the metadata comes out to 32 bytes; After filling the array with 128 of these, the program would tell the user that the last block did not leave enough space to create another metadata at the end, to indicate that new mallocs must either fit into already freed memory, or more memory must be freed. 
+
+(However, due to the fact that some of the tests run over 100 times, we found that extraneous error messages cause the output to be flooded with repetetive text. Many useful messages for the user can be seen commented out of myMalloc and myFree, feel free to test them out yourself.)
+
+After filling the array, all of the allocated memory is freed, and the chunks combined into one large block of free memory. No matter the order or direction in which the chunks are freed, sequential free chunks will be combined. Then, the same thing is done but with 48(+16 =64) chunks, then again with a 4080(+16=4096) chunk, demonstrating that the program effectively combines smaller free entries for use in storing larger entries.
+
+
+Worlload E demonstrates the ability of the malloc function to fit into the first available spot, rather than simply going to the end and hoping to hook onto the end. It also demonstrates some of what was mentioned in F, but the main focus is that 'J' goes into the space left when F is freed, which causes the leftover space from When the 516 bytes of H filled the 632 bytes free'd by C, D, and E. This means that when J is called, it will fill that space, leaving a chunk of 66 bytes behind.
