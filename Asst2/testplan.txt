@@ -1,0 +1,94 @@
+﻿Testplan.txt
+
+build codebook
+[jz570@null proj2]$ ./fileCompressor -b ./file1.txt ./book
+Recursive mode off 
+Flag b found 
+Input2: 
+Hello its me	tab	tab
+new
+Input2 Size: 28 
+000	Hello
+001	its
+010	me
+011	new
+100	 
+101	\t
+110	tab
+111	\n
+
+Codebook has successfully been made and written into file: ./book
+
+
+compress
+[jz570@null proj2]$ ./fileCompressor -c ./file1.txt ./book
+Recursive mode off 
+Flag c found 
+Input2: 
+Hello its me	tab	tab
+new
+Input2 Size: 28 
+000	Hello
+001	its
+010	me
+011	new
+100	 
+101	\t
+110	tab
+111	\n
+000100001100010101110101110111011111
+Codebook was found, compression successful, writing into file: ./file1.txt.hcz
+
+decompress
+[jz570@null proj2]$ ./fileCompressor -d ./file1.txt.hcz ./book
+Recursive mode off 
+Flag d found 
+Input2: 
+Hello its me	tab	tab
+new
+Input2 Size: 28 
+000	Hello
+001	its
+010	me
+011	new
+100	 
+101	\t
+110	tab
+111	\n
+000100001100010101110101110111011111
+
+Codebook was found, decompression successful, writing into original file: ./file1.txt
+
+read INSIDE DIRECTORY build OUTSIDE
+[jz570@null proj2]$ ./fileCompressor -b ./dir1/test.txt ./book
+Recursive mode off 
+Flag b found 
+Input2: 
+test test
+Input2 Size: 10 
+0	test
+10	 
+11	\n
+
+Codebook has successfully been made and written into file: ./book
+
+test.txt is a subdirectory, and book was build in main directory.
+
+Read INSIDE DIRECTORY build INSIDE
+[jz570@null proj2]$ ./fileCompressor -b ./dir1/dir2/test.txt ./dir1/dir2/book
+Recursive mode off 
+Flag b found 
+Input2: 
+test test
+Input2 Size: 10 
+0	test
+10	 
+11	\n
+
+Codebook has successfully been made and written into file: ./dir1/dir2/book
+
+test.txt is 2 subdirectories deep, and book was also written in that directory.
+
+recursive
+valgrind ./fileCompress -R -b . ./book
+The function works UNDER VALGRIND, and all occuring words appear in book.
