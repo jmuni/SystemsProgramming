@@ -1,0 +1,122 @@
+Testplan.txt
+
+***IMPORTANT
+The WTFClient.c and its Makefile are in the client folder
+The serverm.c and its Makefile are in  the server folder   
+Keep the server open, as closing the server may cause unintentional outputs. 
+
+After calling make on both client and server programs - run 
+./WTFserver <port>
+
+EX: ./WTFserver 7713
+STDOUT: Listening
+The server will listen for connections and commands
+
+3.0
+./WTFtest configure <hostname> <port>
+
+This should be the first command for client
+Lets assume that the server hostname is vi.cs.rutgers.edu
+
+EX: ./WTFtest configure vi.cs.rutgers.edu 7713
+This stores the vi.cs.rutgers.edu and 7713 into a .configure file
+If a .configure file is not found, the other commands will NOT work
+
+3.1
+./WTFtest checkout <project name>
+
+EX: ./WTFtest checkout proj2
+If the .configure file exists and is properly set up - the client will attempt to connect to the server using the .configure file. It reads the first input “vi.cs.rutgers.edu” as the host and the second input “7713” as the port
+
+The server is listening and will accept as long as the hostname and port are valid, otherwise the connection is refused and the client gets a host or port error message.
+
+The client should not check out a project that exists as a local file - or an error will occur
+In this example, client should not have a project name proj2 in the directory to proceed.
+
+If the client passes all the error checks, the server reads the projectname and TARS the whole project to project2.tar.gz and sends the tar over the socket.
+
+The client recieves the tarred project, untars it with system commands and deletes the tarred project. The server also deletes its tarred project after the client successfully recieves it.
+3.2
+./WTFtest update <projectname>
+Once the client passes error checking (proper connection with server, project EXISTS locally, and project EXISTS on server)
+
+EX: ./WTFtest update proj2 
+
+At this point if you called checkout first, then the client SHOULD have a local proj2 file and is ready to update.
+
+The client requests the .Manifest of the project name from the server. The server reads the request - makes a .Manifest of that project if it doesn’t exist already, and tars that file. The tarred file is sent over the socket, the client receives it and untars it. Both sides remove the tarred file from their directory
+
+The client creates a .Manifest for its local projectname if it doesnt have one already. Then proceeds to compare its local .Manifest with the servers. If differences are recorded, the action code and the projects full path, version, and hash are written to a .Update file. If the .Manifests are the same throughout, an empty .Update file is made and STDOUT prints “Up to date”. 
+
+Since proj2 was sent over using checkout - the .Manifest is the same as the server sent .Manifest. Therefore the example call returns an “Up to date” message and an empty .Update file is made
+
+3.3
+./WTFtest upgrade <projectname> 
+
+EX ./WTFtest upgrade proj2
+The client looks for the .Update file and records the action code.
+
+Since the .Update file is empty - this example call tells the user to call update first
+Essentially you cannot upgrade if there nothing needs updating.
+
+3.4
+./WTFtest commit <projectname>
+
+Currently not working as intended in this project
+
+3.5
+./WTFtest push <projectname>
+
+EX: ./WTFtest push proj2
+
+This push command attempts to push proj2 to to the server. It first checks if the project exists on the client side. If it doesnt, it can’t push. The it checks the .Update file to make sure there are no M action codes. Since commit is not working in the current implementation, push does not have a .Commit file and sends all the files in the projectname instead. The project is tarred and sent over the socket. The server recieves it and untars it in version# folder, so multiple pushes mean multiple versions of the project.
+
+3.6
+./WTFtest create <projectname>
+
+EX:  ./WTFtest create test
+The client connects with the server (successfully) and sends it the project name to be created.
+The server checks that “test” is not a project that has been made and creates it, and puts an empty .Manifest file inside (since theres no files in test)
+A success message is sent back and the client creates a project named test. The server sends that .Manifest file and the client places it properly in the project directory.
+
+./WTFtest destroy <projectname>
+
+3.7
+EX: ./WTFtest destroy test
+The client sends the projectname to be destroy. The server makes sure that the projectname exists on the server side, which test does, and destroys test. It sends back a success message in this case.
+
+If it does not exist then the server sends back an error message and nothing is destroyed
+
+3.8
+./WTFtest add <projectname> <filename>
+
+EX: ./WTFtest add proj2 new
+This command checks that the project name exists on the client side, which if it does, adds the full filepath to the .Manifest, the version, and the hash. If the file is empty - a hash is still formed.
+
+3.9
+./WTFtest remove <filename>
+
+EX: ./WTFtest remove proj2 new
+This command checks that the project name exists on the client side, which if it does, parses through the manifest looking for the specified filepath - all the other paths,versions. and hashes are written to a .Manifesttemp, and if it finds the filepath, that one is NOT writtem to .Manifesttemp. After writing is done, .Manifesttemp replaces .Manifest, as it no longer has the removed filename.
+
+If the filename is not found, the .Manifest is replaced with the UNCHANGED .Manifesttemp 
+--essentially .Manifest is not changed.  
+
+adds the full filepath to the .Manifest, the version, and the hash. If the file is empty - a hash is still formed.
+
+3.10
+./WTFtest currentversion <project name>
+
+EX ./WTFtest currentversion proj2
+The client sends a project name to the server. The server checks that it exists and opens it .Manifest file (if .Manifest is not found it creates one). Then it writes the file path and version to a file called <projectname>.CV, tars it and sends it to the client over the socket. The client untars the file and prints it to STD OUT. 
+
+3.11
+./WTFtest history <projectname>
+
+This command is currently not working as intended.
+
+3.12
+./WTFtest rollback <projectname> <version>
+
+This command is currently not working as intended. 
+
