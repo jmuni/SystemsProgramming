@@ -1,0 +1,14 @@
+README
+
+Design
+
+
+Mutex Implementation
+
+The server makes a unique mutex for each folder found in the directory of server.c, these mutexes are used to lock specific functions that are being done on the same project.
+
+Multi-Threading
+
+The server creates a new thread for each connection, and sends it to the function “dostuff2”, which handles whatever command the client has sent it. When it finishes it closes the socket. 
+
+
